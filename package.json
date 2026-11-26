@@ -1,5 +1,5 @@
 {
-  "name": "csrfshield",
+  "name": "@aarivbuildz/csrfshield",
   "version": "1.0.0",
   "description": "Zero-dependency signed double-submit CSRF protection with fetch metadata defense for Node.js and Web Fetch runtimes",
   "type": "module",

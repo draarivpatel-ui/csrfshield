@@ -21,7 +21,7 @@ Deno, and Bun.
 ## Install
 
 ```sh
-npm install csrfshield
+npm install @aarivbuildz/csrfshield
 ```
 
 ## Quick start
@@ -30,7 +30,7 @@ The same shield instance works with Node request objects and with Fetch
 `Request` objects.
 
 ```js
-import { createShield } from 'csrfshield';
+import { createShield } from '@aarivbuildz/csrfshield';
 
 const shield = createShield({
   secrets: [process.env.CSRF_SECRET],
@@ -58,7 +58,7 @@ const shield = createShield({
 CommonJS is supported through the same package name:
 
 ```js
-const { createShield } = require('csrfshield');
+const { createShield } = require('@aarivbuildz/csrfshield');
 const { nodeCrypto } = require('csrfshield/node');
 ```
 
@@ -100,7 +100,7 @@ state changing methods it verifies the request, exposes the result on
 ## Next.js Edge route handler
 
 ```js
-import { createShield } from 'csrfshield';
+import { createShield } from '@aarivbuildz/csrfshield';
 
 const shield = createShield({
   secrets: [process.env.CSRF_SECRET],
@@ -127,7 +127,7 @@ object to customize the CSRF response.
 ## Cloudflare Workers
 
 ```js
-import { createShield } from 'csrfshield';
+import { createShield } from '@aarivbuildz/csrfshield';
 
 const shield = createShield({
   secrets: [env.CSRF_SECRET],
