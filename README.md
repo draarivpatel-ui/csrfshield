@@ -16,7 +16,7 @@ Deno, and Bun.
 - Exact Origin and Referer matching, never prefix or substring matching.
 - BREACH-safe masked tokens with a fresh random mask per submission.
 - Structured errors with stable machine-readable codes.
-- 184 deterministic tests, verified with `npm test` on Node 18 or newer.
+- 188 deterministic tests, verified with `npm test` on Node 18 or newer.
 
 ## Install
 
@@ -91,9 +91,10 @@ app.post('/transfer', (request, response) => {
 Import the Node adapter with `import { nodeCrypto } from 'csrfshield/node'` and
 pass it as `crypto: nodeCrypto` in the configuration above.
 
-On safe methods (`GET`, `HEAD`, and `OPTIONS`) the middleware issues a token
-when one is missing and exposes it on `response.locals.csrfToken`. On state
-changing methods it verifies the request, exposes the result on
+On safe methods (`GET`, `HEAD`, and `OPTIONS`) the middleware verifies any
+existing cookie, issues a fresh token when the cookie is missing, malformed,
+forged, or expired, and exposes the token on `response.locals.csrfToken`. On
+state changing methods it verifies the request, exposes the result on
 `response.locals.csrfVerified`, and forwards failures to `next(error)`.
 
 ## Next.js Edge route handler
@@ -118,8 +119,10 @@ export const POST = shield.withFetch(
 ```
 
 `withFetch` returns a structured JSON 403 response with `Cache-Control:
-no-store` when verification fails. Pass `onError` in the settings object to
-customize the response.
+no-store` when verification fails. Only CSRF failures are converted: an error
+thrown by the handler or by a custom extractor propagates to the framework
+instead of leaking its message in a 403 body. Pass `onError` in the settings
+object to customize the CSRF response.
 
 ## Cloudflare Workers
 
@@ -217,8 +220,9 @@ npm run build:cjs
 
 The test suite covers SHA-256 and HMAC vectors, cookie tossing, duplicate
 Cookie headers, key rotation, expiry and clock skew, Fetch Metadata behavior,
-Origin bypass attempts, BREACH masking, Express middleware, Fetch adapters,
-and ESM and CommonJS parity. See [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md)
+Origin bypass attempts, BREACH masking, forged cookie replacement, adapter
+error propagation, Express middleware, Fetch adapters, and ESM and CommonJS
+parity. See [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md)
 for framework integration ideas.
 
 ## License

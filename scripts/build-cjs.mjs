@@ -38,5 +38,21 @@ const output = [
   ''
 ].join('\n');
 
-await writeFile(path.join(root, 'cjs', 'index.cjs'), output, 'utf8');
-process.stdout.write('cjs/index.cjs generated from src/index.mjs\n');
+const target = path.join(root, 'cjs', 'index.cjs');
+
+if (process.argv.includes('--check')) {
+  let current = null;
+  try {
+    current = await readFile(target, 'utf8');
+  } catch (_) {
+    current = null;
+  }
+  if (current !== output) {
+    process.stderr.write('cjs/index.cjs is out of date; run npm run build:cjs\n');
+    process.exit(1);
+  }
+  process.stdout.write('cjs/index.cjs is up to date\n');
+} else {
+  await writeFile(target, output, 'utf8');
+  process.stdout.write('cjs/index.cjs generated from src/index.mjs\n');
+}

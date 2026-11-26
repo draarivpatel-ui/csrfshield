@@ -879,6 +879,13 @@ export function createShield(options = {}) {
       let existing = null;
       try {
         existing = parseCookieHeader(ctx.cookieHeader, cookie.name, { rejectDuplicateHeaders: true });
+        if (existing !== null) {
+          // Never hand a token to the page that the server has not signed.
+          // A well formed but forged or expired cookie is replaced instead of
+          // being reflected back, which stops cookie tossing from fixing a
+          // token the attacker already knows.
+          verifyToken(existing, { sessionId: resolveSession(ctx, ctx.raw) });
+        }
       } catch (_) {
         existing = null;
       }
@@ -909,12 +916,17 @@ export function createShield(options = {}) {
   function withFetch(handler, settings = {}) {
     if (typeof handler !== 'function') fail(CODE.INVALID_CONFIG, 'handler must be a function');
     return async function csrfFetchHandler(request, ...rest) {
+      let verified;
       try {
-        const verified = await verifyRequest(request, settings);
-        return await handler(request, verified, ...rest);
+        verified = await verifyRequest(request, settings);
       } catch (error) {
-        return errorResponse(error, settings);
+        // Only CSRF failures become CSRF responses. Application errors thrown
+        // by the handler (or by a custom extractor) must propagate to the
+        // framework, otherwise internal messages leak in a 403 body.
+        if (error instanceof CsrfShieldError) return errorResponse(error, settings);
+        throw error;
       }
+      return await handler(request, verified, ...rest);
     };
   }
 

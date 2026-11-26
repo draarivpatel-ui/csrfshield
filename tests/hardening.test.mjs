@@ -479,7 +479,9 @@ test('middleware requires a next callback', async () => {
 
 test('middleware reuses an existing cookie instead of setting another one', async () => {
   const plain = shield();
-  const token = plain.issueToken({}, { now: 1000000 });
+  // The middleware now verifies the cookie before reusing it, so the token has
+  // to be inside its TTL relative to the middleware's real clock.
+  const token = plain.issueToken({});
   const appended = [];
   const response = { locals: {}, appendHeader: (name, value) => appended.push([name, value]) };
   await plain.middleware({ method: 'GET', headers: { cookie: '__Host-csrf=' + token } }, response, () => {});
