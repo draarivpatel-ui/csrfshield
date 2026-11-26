@@ -1,0 +1,55 @@
+{
+  "name": "csrfshield",
+  "version": "1.0.0",
+  "description": "Zero-dependency signed double-submit CSRF protection with fetch metadata defense for Node.js and Web Fetch runtimes",
+  "type": "module",
+  "main": "./cjs/index.cjs",
+  "module": "./src/index.mjs",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./src/index.mjs",
+      "require": "./cjs/index.cjs"
+    },
+    "./node": {
+      "types": "./types/node.d.ts",
+      "import": "./src/node.mjs",
+      "require": "./cjs/node.cjs"
+    }
+  },
+  "files": [
+    "src",
+    "cjs",
+    "types",
+    "README.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "GOOD_FIRST_ISSUES.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build:cjs": "node scripts/build-cjs.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "csrf",
+    "security",
+    "csurf",
+    "double-submit",
+    "fetch-metadata",
+    "session",
+    "hmac",
+    "express",
+    "workers",
+    "edge",
+    "zero-dependency"
+  ],
+  "license": "MIT",
+  "sideEffects": false,
+  "dependencies": {},
+  "devDependencies": {}
+}
