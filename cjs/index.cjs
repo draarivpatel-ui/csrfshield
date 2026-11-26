@@ -6,9 +6,11 @@
  * csrfshield core.
  *
  * Signed double-submit CSRF protection with fetch metadata defense in depth.
- * This file has no imports: it runs on Node.js, Deno, Bun and edge runtimes
- * with the same behavior. The CommonJS build is generated from this file by
- * scripts/build-cjs.mjs so both module formats cannot drift.
+ * This file has no static imports: it runs on Node.js, Deno, Bun and edge
+ * runtimes with the same behavior. Node 18's Web Crypto implementation is
+ * loaded conditionally because it predates globalThis.crypto. The CommonJS
+ * build is generated from this file by scripts/build-cjs.mjs so both module
+ * formats cannot drift.
  */
 
 const CODE = Object.freeze({
@@ -268,12 +270,17 @@ function timingSafeEqual(a, b) {
   return diff === 0;
 }
 
+let runtimeCrypto = globalThis.crypto;
+if ((!runtimeCrypto || typeof runtimeCrypto.getRandomValues !== 'function') && typeof process !== 'undefined' && process.versions && process.versions.node) {
+  runtimeCrypto = require('node:crypto').webcrypto;
+}
+
 /** Default crypto adapter: Web Crypto randomness plus portable HMAC. */
 const webCrypto = Object.freeze({
   name: 'web-crypto',
   randomBytes(length) {
     if (!Number.isInteger(length) || length < 1) fail(CODE.INVALID_CONFIG, 'randomBytes length must be a positive integer');
-    const source = globalThis.crypto;
+    const source = globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function' ? globalThis.crypto : runtimeCrypto;
     if (!source || typeof source.getRandomValues !== 'function') {
       fail(CODE.RNG_UNAVAILABLE, 'no cryptographically secure random source is available');
     }

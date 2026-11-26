@@ -1,7 +1,8 @@
 /*
  * Generate the CommonJS build from the single ESM source of truth.
- * src/index.mjs has no imports and uses no ESM-only syntax beyond export
- * declarations, so the transform stays small and auditable.
+ * src/index.mjs has no static imports. Besides export declarations, the
+ * transform lowers the conditional Node crypto dynamic import so the output
+ * stays synchronous CommonJS.
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +19,9 @@ const EXPORT_NAMES = [
 ];
 
 let body = source;
+const nodeCryptoImport = "runtimeCrypto = (await import('node:crypto')).webcrypto;";
+if (!body.includes(nodeCryptoImport)) throw new Error('CJS transform could not find the Node crypto fallback');
+body = body.replace(nodeCryptoImport, "runtimeCrypto = require('node:crypto').webcrypto;");
 body = body.replace(/^export const /gm, 'const ');
 body = body.replace(/^export class /gm, 'class ');
 body = body.replace(/^export function /gm, 'function ');
