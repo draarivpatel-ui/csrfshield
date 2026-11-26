@@ -1,7 +1,15 @@
 {
   "name": "@aarivbuildz/csrfshield",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Zero-dependency signed double-submit CSRF protection with fetch metadata defense for Node.js and Web Fetch runtimes",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/draarivpatel-ui/csrfshield.git"
+  },
+  "homepage": "https://github.com/draarivpatel-ui/csrfshield#readme",
+  "bugs": {
+    "url": "https://github.com/draarivpatel-ui/csrfshield/issues"
+  },
   "type": "module",
   "main": "./cjs/index.cjs",
   "module": "./src/index.mjs",
