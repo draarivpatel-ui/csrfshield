@@ -1,5 +1,7 @@
 # csrfshield
 
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/draarivpatel-ui/csrfshield/badge)](https://scorecard.dev/viewer/?uri=github.com/draarivpatel-ui/csrfshield)
+
 Zero-dependency, stateless CSRF protection for Node.js and Web Fetch runtimes.
 
 `csrfshield` replaces the archived `csurf` package with a signed double-submit

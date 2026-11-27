@@ -9,7 +9,7 @@ dependencies.
 npm test
 ```
 
-All 184 tests must pass before submitting a change.
+All 188 tests must pass before submitting a change.
 
 ## Guidelines
 
